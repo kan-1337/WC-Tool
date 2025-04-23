@@ -1,33 +1,31 @@
-﻿public class Command
+﻿internal class CommandParser
 {
-    public CommandOption Option { get; set; }
-    public string FilePath { get; set; } = string.Empty;
+    private readonly AppConfig _config;
 
-    public string FileName => Path.GetFileName(FilePath);
+    public CommandParser(AppConfig config)
+    {
+        _config = config;
+    }
 
-    public bool IsValid => File.Exists(FilePath);
-
-    public static Command Parse(string input, AppConfig config)
+    public Command Parse(string input)
     {
         if (string.IsNullOrWhiteSpace(input) || !input.StartsWith("ccwc"))
             return new Command();
 
         var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-        // Support for "ccwc" command without options
         if (parts.Length == 2)
         {
             var cleaned = parts[1].Trim('"', ' ');
-            var fullPath = Path.Combine(config.BaseFolder, cleaned);
+            var fullPath = Path.Combine(_config.BaseFolder, cleaned);
 
             return new Command
             {
-                Option = CommandOption.None, 
+                Option = CommandOption.None,
                 FilePath = fullPath
             };
         }
 
-        // Support for "ccwc" command with options
         if (parts.Length >= 3)
         {
             var option = parts[1] switch
@@ -40,7 +38,7 @@
             };
 
             var cleaned = parts[2].Trim('"', ' ');
-            var fullPath = Path.Combine(config.BaseFolder, cleaned);
+            var fullPath = Path.Combine(_config.BaseFolder, cleaned);
 
             return new Command
             {
@@ -51,5 +49,4 @@
 
         return new Command();
     }
-
 }

@@ -1,58 +1,43 @@
-﻿var config = AppConfig.Load();
+﻿using WCTool.Services;
+
+var config = AppConfig.Load();
+var parser = new CommandParser(config);
+
+Console.WriteLine("Enter your command:");
 var input = Console.ReadLine();
 
 if (string.IsNullOrWhiteSpace(input))
 {
-    Console.WriteLine("No command provided.");
+    Console.WriteLine("No command entered.");
     return;
 }
 
-var command = Command.Parse(input, config);
-
-if (!command.IsValid)
-{
-    Console.WriteLine("Invalid command or file not found.");
-    return;
-}
+var command = parser.Parse(input);
+var analyzer = new FileAnalyzer();
 
 switch (command.Option)
 {
     case CommandOption.CountBytes:
-        Console.WriteLine($"{GetBytesFromFile(command),8} {Path.GetFileName(command.FilePath)}");
+        Console.WriteLine($"{analyzer.GetByteCount(command.FilePath),8} {command.FileName}");
         break;
-    case CommandOption.CountLines:
-        Console.WriteLine(GetLineCount(command));
-        break;
-    case CommandOption.CountWords:
-        Console.WriteLine($"{GetWordCount(command).Length,8} {command.FileName}");
-        break;
-    case CommandOption.CountCharacters:
-        Console.WriteLine($"{GetCharacterCount(command),8} {command.FileName}");
-        break;
-    case CommandOption.None:
-        Console.WriteLine($"{GetLineCount(command),8} {GetWordCount(command).Length,8} {GetBytesFromFile(command),8} {command.FileName}");
-        break;
-    default:
-        Console.WriteLine("Unsupported command.");
-        break;
-}
 
-// Helper methods
-static int GetBytesFromFile(Command command)
-{
-    return File.ReadAllBytes(command.FilePath).Length;
-}
-static int GetLineCount(Command command)
-{
-    return File.ReadLines(command.FilePath).Count();
-}
-static string[] GetWordCount(Command command)
-{
-    var text = File.ReadAllText(command.FilePath);
-    var words = text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
-    return words;
-}
-static int GetCharacterCount(Command command)
-{
-    return File.ReadAllText(command.FilePath).Length;
+    case CommandOption.CountLines:
+        Console.WriteLine($"{analyzer.GetLineCount(command.FilePath),8} {command.FileName}");
+        break;
+
+    case CommandOption.CountWords:
+        Console.WriteLine($"{analyzer.GetWordCount(command.FilePath),8} {command.FileName}");
+        break;
+
+    case CommandOption.CountCharacters:
+        Console.WriteLine($"{analyzer.GetCharacterCount(command.FilePath),8} {command.FileName}");
+        break;
+
+    case CommandOption.None:
+        Console.WriteLine(
+            $"{analyzer.GetLineCount(command.FilePath),8}" +
+            $"{analyzer.GetWordCount(command.FilePath),8}" +
+            $"{analyzer.GetByteCount(command.FilePath),8} {command.FileName}"
+        );
+        break;
 }
