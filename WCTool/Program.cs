@@ -14,6 +14,10 @@ switch (command.Option)
         var bytes = File.ReadAllBytes(command.FilePath).Length;
         Console.WriteLine($"{bytes,8} {Path.GetFileName(command.FilePath)}");
         break;
+    case CommandOption.CountLines:
+        var lines = File.ReadLines(command.FilePath).Count();
+        Console.WriteLine(lines);
+        break;
     default:
         Console.WriteLine("Unsupported command.");
         break;
