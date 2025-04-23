@@ -3,3 +3,6 @@
 
 
 https://codingchallenges.fyi/challenges/challenge-wc
+
+
+To make it work change the file path in json config to match your directory
