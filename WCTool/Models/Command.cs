@@ -1,4 +1,5 @@
-﻿public class Command
+﻿namespace WCTool.Models;
+public class Command
 {
     public CommandOption Option { get; set; }
     public string FilePath { get; set; } = string.Empty;

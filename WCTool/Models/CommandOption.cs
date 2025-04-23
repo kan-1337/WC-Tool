@@ -1,5 +1,4 @@
-﻿
-
+﻿namespace WCTool.Models;
 public enum CommandOption
 {
     None,

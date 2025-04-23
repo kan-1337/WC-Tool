@@ -1,4 +1,5 @@
-﻿internal class CommandParser
+﻿namespace WCTool.Models;
+public class CommandParser
 {
     private readonly AppConfig _config;
 
@@ -14,39 +15,40 @@
 
         var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
+        // ccwc <file> — No flag provided
         if (parts.Length == 2)
-        {
-            var cleaned = parts[1].Trim('"', ' ');
-            var fullPath = Path.Combine(_config.BaseFolder, cleaned);
+            return BuildCommand(CommandOption.None, parts[1]);
 
-            return new Command
-            {
-                Option = CommandOption.None,
-                FilePath = fullPath
-            };
-        }
-
+        // ccwc -x <file> — Flag + file
         if (parts.Length >= 3)
         {
-            var option = parts[1] switch
-            {
-                "-c" => CommandOption.CountBytes,
-                "-l" => CommandOption.CountLines,
-                "-w" => CommandOption.CountWords,
-                "-m" => CommandOption.CountCharacters,
-                _ => CommandOption.None
-            };
-
-            var cleaned = parts[2].Trim('"', ' ');
-            var fullPath = Path.Combine(_config.BaseFolder, cleaned);
-
-            return new Command
-            {
-                Option = option,
-                FilePath = fullPath
-            };
+            var option = MapToOption(parts[1]);
+            return BuildCommand(option, parts[2]);
         }
 
-        return new Command();
+        return new Command(); // fallback
     }
+
+    // ccwc -x <file> — Flag + file
+    private Command BuildCommand(CommandOption option, string rawFile)
+    {
+        var cleaned = rawFile.Trim('"', ' ');
+        var fullPath = Path.Combine(_config.BaseFolder, cleaned);
+
+        return new Command
+        {
+            Option = option,
+            FilePath = fullPath
+        };
+    }
+
+    // ccwc <file> — No flag provided
+    private CommandOption MapToOption(string flag) => flag switch
+    {
+        "-c" => CommandOption.CountBytes,
+        "-l" => CommandOption.CountLines,
+        "-w" => CommandOption.CountWords,
+        "-m" => CommandOption.CountCharacters,
+        _ => CommandOption.None
+    };
 }

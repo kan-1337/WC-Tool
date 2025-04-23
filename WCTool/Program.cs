@@ -1,4 +1,5 @@
-﻿using WCTool.Services;
+﻿using WCTool.Models;
+using WCTool.Services;
 
 var config = AppConfig.Load();
 var parser = new CommandParser(config);
