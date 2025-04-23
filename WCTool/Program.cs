@@ -18,6 +18,11 @@ switch (command.Option)
         var lines = File.ReadLines(command.FilePath).Count();
         Console.WriteLine(lines);
         break;
+    case CommandOption.CountWords:
+        var text = File.ReadAllText(command.FilePath);
+        var words = text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+        Console.WriteLine($"{words.Length,8} {command.FileName}");
+        break;
     default:
         Console.WriteLine("Unsupported command.");
         break;
