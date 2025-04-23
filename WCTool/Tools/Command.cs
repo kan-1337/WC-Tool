@@ -5,8 +5,7 @@
 
     public string FileName => Path.GetFileName(FilePath);
 
-    public bool IsValid =>
-        Option != CommandOption.None && File.Exists(FilePath);
+    public bool IsValid => File.Exists(FilePath);
 
     public static Command Parse(string input, AppConfig config)
     {
@@ -14,25 +13,43 @@
             return new Command();
 
         var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        if (parts.Length < 3)
-            return new Command();
 
-        var option = parts[1] switch
+        // Support for "ccwc" command without options
+        if (parts.Length == 2)
         {
-            "-c" => CommandOption.CountBytes,
-            "-l" => CommandOption.CountLines,
-            "-w" => CommandOption.CountWords,
-            "-m" => CommandOption.CountCharacters,
-            _ => CommandOption.None
-        };
+            var cleaned = parts[1].Trim('"', ' ');
+            var fullPath = Path.Combine(config.BaseFolder, cleaned);
 
-        var cleaned = parts[2].Trim('"', ' ');
-        var fullPath = Path.Combine(config.BaseFolder, cleaned);
+            return new Command
+            {
+                Option = CommandOption.None, 
+                FilePath = fullPath
+            };
+        }
 
-        return new Command
+        // Support for "ccwc" command with options
+        if (parts.Length >= 3)
         {
-            Option = option,
-            FilePath = fullPath
-        };
+            var option = parts[1] switch
+            {
+                "-c" => CommandOption.CountBytes,
+                "-l" => CommandOption.CountLines,
+                "-w" => CommandOption.CountWords,
+                "-m" => CommandOption.CountCharacters,
+                _ => CommandOption.None
+            };
+
+            var cleaned = parts[2].Trim('"', ' ');
+            var fullPath = Path.Combine(config.BaseFolder, cleaned);
+
+            return new Command
+            {
+                Option = option,
+                FilePath = fullPath
+            };
+        }
+
+        return new Command();
     }
+
 }

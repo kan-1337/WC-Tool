@@ -1,5 +1,12 @@
 ﻿var config = AppConfig.Load();
 var input = Console.ReadLine();
+
+if (string.IsNullOrWhiteSpace(input))
+{
+    Console.WriteLine("No command provided.");
+    return;
+}
+
 var command = Command.Parse(input, config);
 
 if (!command.IsValid)
@@ -11,19 +18,41 @@ if (!command.IsValid)
 switch (command.Option)
 {
     case CommandOption.CountBytes:
-        var bytes = File.ReadAllBytes(command.FilePath).Length;
-        Console.WriteLine($"{bytes,8} {Path.GetFileName(command.FilePath)}");
+        Console.WriteLine($"{GetBytesFromFile(command),8} {Path.GetFileName(command.FilePath)}");
         break;
     case CommandOption.CountLines:
-        var lines = File.ReadLines(command.FilePath).Count();
-        Console.WriteLine(lines);
+        Console.WriteLine(GetLineCount(command));
         break;
     case CommandOption.CountWords:
-        var text = File.ReadAllText(command.FilePath);
-        var words = text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
-        Console.WriteLine($"{words.Length,8} {command.FileName}");
+        Console.WriteLine($"{GetWordCount(command).Length,8} {command.FileName}");
+        break;
+    case CommandOption.CountCharacters:
+        Console.WriteLine($"{GetCharacterCount(command),8} {command.FileName}");
+        break;
+    case CommandOption.None:
+        Console.WriteLine($"{GetLineCount(command),8} {GetWordCount(command).Length,8} {GetBytesFromFile(command),8} {command.FileName}");
         break;
     default:
         Console.WriteLine("Unsupported command.");
         break;
+}
+
+// Helper methods
+static int GetBytesFromFile(Command command)
+{
+    return File.ReadAllBytes(command.FilePath).Length;
+}
+static int GetLineCount(Command command)
+{
+    return File.ReadLines(command.FilePath).Count();
+}
+static string[] GetWordCount(Command command)
+{
+    var text = File.ReadAllText(command.FilePath);
+    var words = text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+    return words;
+}
+static int GetCharacterCount(Command command)
+{
+    return File.ReadAllText(command.FilePath).Length;
 }
