@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WCTool", "WCTool\WCTool.csproj", "{04F1C401-D6A6-4C1F-81BF-7234BD5093EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{04F1C401-D6A6-4C1F-81BF-7234BD5093EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04F1C401-D6A6-4C1F-81BF-7234BD5093EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04F1C401-D6A6-4C1F-81BF-7234BD5093EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04F1C401-D6A6-4C1F-81BF-7234BD5093EF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
