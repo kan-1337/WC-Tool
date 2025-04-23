@@ -1,8 +1,9 @@
 ﻿using System.Text.Json;
-
+namespace WCTool.Config;
 public class AppConfig
 {
     public string BaseFolder { get; set; } = "";
+
     public static AppConfig Load(string path = "config.json")
     {
         if (!File.Exists(path))

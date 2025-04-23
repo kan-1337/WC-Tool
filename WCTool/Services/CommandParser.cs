@@ -1,4 +1,7 @@
-﻿namespace WCTool.Models;
+﻿using WCTool.Config;
+using WCTool.Models;
+
+namespace WCTool.Services;
 public class CommandParser
 {
     private readonly AppConfig _config;
@@ -15,40 +18,56 @@ public class CommandParser
 
         var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-        // ccwc <file> — No flag provided
+        // ccwc <file> — No flags, just file
         if (parts.Length == 2)
-            return BuildCommand(CommandOption.None, parts[1]);
-
-        // ccwc -x <file> — Flag + file
-        if (parts.Length >= 3)
         {
-            var option = MapToOption(parts[1]);
-            return BuildCommand(option, parts[2]);
+            return BuildCommand(new List<CommandOption>(), parts[1]);
         }
 
-        return new Command(); // fallback
+        // ccwc -clw <file>
+        if (parts.Length >= 3)
+        {
+            var options = ParseFlags(parts[1]);
+            return BuildCommand(options, parts[2]);
+        }
+
+        return new Command();
     }
 
-    // ccwc -x <file> — Flag + file
-    private Command BuildCommand(CommandOption option, string rawFile)
+    private List<CommandOption> ParseFlags(string flagString)
+    {
+        var options = new List<CommandOption>();
+
+        if (!flagString.StartsWith("-"))
+            return options;
+
+        foreach (var c in flagString.Skip(1))
+        {
+            var option = c switch
+            {
+                'c' => CommandOption.CountBytes,
+                'l' => CommandOption.CountLines,
+                'w' => CommandOption.CountWords,
+                'm' => CommandOption.CountCharacters,
+                _ => CommandOption.None
+            };
+
+            if (option != CommandOption.None && !options.Contains(option))
+                options.Add(option);
+        }
+
+        return options;
+    }
+
+    private Command BuildCommand(List<CommandOption> options, string rawFile)
     {
         var cleaned = rawFile.Trim('"', ' ');
         var fullPath = Path.Combine(_config.BaseFolder, cleaned);
 
         return new Command
         {
-            Option = option,
+            Options = options,
             FilePath = fullPath
         };
     }
-
-    // ccwc <file> — No flag provided
-    private CommandOption MapToOption(string flag) => flag switch
-    {
-        "-c" => CommandOption.CountBytes,
-        "-l" => CommandOption.CountLines,
-        "-w" => CommandOption.CountWords,
-        "-m" => CommandOption.CountCharacters,
-        _ => CommandOption.None
-    };
 }
