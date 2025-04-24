@@ -6,9 +6,6 @@ public class Command
     public string FilePath { get; set; } = string.Empty;
 
     public string FileName => Path.GetFileName(FilePath);
-
     public bool IsValid =>
-        !string.IsNullOrWhiteSpace(FilePath) && File.Exists(FilePath);
-
-
+        (Console.IsInputRedirected || File.Exists(FilePath));
 }

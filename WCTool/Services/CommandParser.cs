@@ -24,6 +24,17 @@ public class CommandParser
             return BuildCommand(new List<CommandOption>(), parts[1]);
         }
 
+        // ccwc -l (with piped input and no filename)
+        if (parts.Length == 2 && Console.IsInputRedirected)
+        {
+            var options = ParseFlags(parts[1]);
+            return new Command
+            {
+                Options = options,
+                FilePath = string.Empty
+            };
+        }
+
         // ccwc -clw <file>
         if (parts.Length >= 3)
         {

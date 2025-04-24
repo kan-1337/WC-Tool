@@ -6,13 +6,15 @@ var config = AppConfig.Load();
 var parser = new CommandParser(config);
 var executor = new CommandExecutor();
 
-Console.WriteLine("Enter your command:");
-var input = Console.ReadLine();
-
-if (string.IsNullOrWhiteSpace(input))
+string input = "";
+if (Console.IsInputRedirected)
 {
-    Console.WriteLine("No command entered.");
-    return;
+    input = "ccwc " + string.Join(" ", args);
+}
+else
+{
+    Console.WriteLine("Enter your command:");
+    input = Console.ReadLine() ?? string.Empty;
 }
 
 var command = parser.Parse(input);
